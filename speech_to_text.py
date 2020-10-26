@@ -36,7 +36,9 @@ def get_text_from_audio(audio):
     data = json.loads(resp.content)
     
     # get text from data
-    text = data['text'] if data['text'] else data['_text']
+    if 'text' not in data:
+        print(data)
+    text = data['text']
     
     # return the text
     write_text_to_file(text, "text.txt")
@@ -44,7 +46,7 @@ def get_text_from_audio(audio):
 
 def write_text_to_file(text, filename):
     with open(filename, 'a') as text_file:
-        text_file.write(text)
+        text_file.write(text + "\n")
     print("finished write")
 
 if __name__ == "__main__":
