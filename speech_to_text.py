@@ -1,3 +1,5 @@
+#!/bin/python3.8
+
 import threading
 import requests
 import json
@@ -50,9 +52,11 @@ def write_text_to_file(text):
     date_now = datetime.now()
     filename = "{}{}{}.txt".format(date_now.year, date_now.month, date_now.day)
 
-    if os.path.exists("texts") is not True:
-        os.mkdir("texts")
-    filename = os.path.join("texts", filename)
+    TEXT_FOLDER = config['TEXT']['FOLDER']
+
+    if os.path.exists(TEXT_FOLDER) is not True:
+        os.mkdir(TEXT_FOLDER)
+    filename = os.path.join(TEXT_FOLDER, filename)
 
     with open(filename, 'a') as text_file:
         text_file.write(text + " ")
