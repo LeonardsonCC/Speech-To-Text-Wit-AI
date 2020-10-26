@@ -2,7 +2,9 @@ import threading
 import requests
 import json
 import io
+import os
 import configparser
+from datetime import datetime
 from Recorder import record_audio, read_audio
 
 # Getting config parameters
@@ -41,13 +43,20 @@ def get_text_from_audio(audio):
     text = data['text']
     
     # return the text
-    write_text_to_file(text, "text.txt")
+    write_text_to_file(text)
 
 
-def write_text_to_file(text, filename):
+def write_text_to_file(text):
+    date_now = datetime.now()
+    filename = "{}{}{}.txt".format(date_now.year, date_now.month, date_now.day)
+
+    if os.path.exists("texts") is not True:
+        os.mkdir("texts")
+    filename = os.path.join("texts", filename)
+
     with open(filename, 'a') as text_file:
-        text_file.write(text + "\n")
-    print("finished write")
+        text_file.write(text + " ")
+    print("Finished write in {}".format(filename))
 
 if __name__ == "__main__":
     while True:
