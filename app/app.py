@@ -10,16 +10,15 @@ from Recorder import record_audio, read_audio
 from Config import Config
 
 # getting config parameters
-config_file = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', "config.ini"))
-config = Config(config_file)
+config = Config()
 
 API_ENDPOINT = config.get_config('WIT_AI', 'API_ENDPOINT')
 wit_access_token = config.get_config('WIT_AI', 'ACCESS_TOKEN')
 
 def start_record_audio():
-    # record audio of specified length in specified audio file
+    # record audio and save in memory (BytesIO)
     temp_file = io.BytesIO()
-    audio_bytes = record_audio(temp_file)
+    audio_bytes = record_audio(config, temp_file)
 
     # reading audio
     audio = read_audio(audio_bytes)
