@@ -5,21 +5,22 @@ import requests
 import json
 import io
 import os
-import configparser
 from datetime import datetime
 from Recorder import record_audio, read_audio
+from Config import Config
 
-# Getting config parameters
-config = configparser.ConfigParser()
-config.read("config.ini")
-API_ENDPOINT = config['WIT_AI']['API_ENDPOINT']
-wit_access_token = config['WIT_AI']['ACCESS_TOKEN']
+# getting config parameters
+config_file = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', "config.ini"))
+config = Config(config_file)
+
+API_ENDPOINT = config.get_config('WIT_AI', 'API_ENDPOINT')
+wit_access_token = config.get_config('WIT_AI', 'ACCESS_TOKEN')
 
 def start_record_audio():
     # record audio of specified length in specified audio file
     temp_file = io.BytesIO()
     audio_bytes = record_audio(temp_file)
-    
+
     # reading audio
     audio = read_audio(audio_bytes)
 
@@ -35,15 +36,15 @@ def get_text_from_audio(audio):
     # making an HTTP post request
     resp = requests.post(API_ENDPOINT, headers = headers,
                          data = audio)
-    
+
     # converting response content to JSON format
     data = json.loads(resp.content)
-    
+
     # get text from data
     if 'text' not in data:
         print(data)
     text = data['text']
-    
+
     # return the text
     write_text_to_file(text)
 
@@ -52,7 +53,7 @@ def write_text_to_file(text):
     date_now = datetime.now()
     filename = "{}{}{}.txt".format(date_now.year, date_now.month, date_now.day)
 
-    TEXT_FOLDER = config['TEXT']['FOLDER']
+    TEXT_FOLDER = config.get_config('TEXT', 'FOLDER')
 
     if os.path.exists(TEXT_FOLDER) is not True:
         os.mkdir(TEXT_FOLDER)
@@ -64,4 +65,4 @@ def write_text_to_file(text):
 
 if __name__ == "__main__":
     while True:
-        audio = start_record_audio()
+        start_record_audio()
